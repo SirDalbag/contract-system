@@ -30,6 +30,7 @@ class Contract(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
     date = models.DateField(db_index=True)
     file_path = models.FileField(upload_to="files/")
+    
     def __str__(self):
         return f"{self.author} - {self.agent_id} - {self.total} - {self.date}"
 
