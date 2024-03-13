@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/get/comments/', views.get_objects_or_object, {'model': models.Comment, 'serializer': serializers.CommentSerializer}),
     path('api/get/comment/<int:id>/', views.get_objects_or_object, {'model': models.Comment, 'serializer': serializers.CommentSerializer}),
     path('api/post/comment/', views.post_object, {'serializer': serializers.CommentSerializer}),
+    path('api/get/contracts/author/<int:id>', views.get_contracts_by_author),
 ]
