@@ -10,7 +10,7 @@ urlpatterns = [
         {"model": models.Contract, "serializer": serializers.ContractSerializer},
     ),
     path(
-        "api/get/contract/<int:id>/",
+        "api/get/contracts/<int:id>/",
         views.get_objects_or_object,
         {"model": models.Contract, "serializer": serializers.ContractSerializer},
     ),
@@ -35,7 +35,7 @@ urlpatterns = [
     path(
         "api/post/contract/",
         views.post_object,
-        {"serializer": serializers.ContractSerializer},
+        {"serializer": serializers.PostContractSerializer},
     ),
     path(
         "api/get/agents/",
@@ -43,7 +43,7 @@ urlpatterns = [
         {"model": models.Agent, "serializer": serializers.AgentSerializer},
     ),
     path(
-        "api/get/agent/<int:id>/",
+        "api/get/agents/<int:id>/",
         views.get_objects_or_object,
         {"model": models.Agent, "serializer": serializers.AgentSerializer},
     ),
@@ -58,7 +58,7 @@ urlpatterns = [
         {"model": models.Comment, "serializer": serializers.CommentSerializer},
     ),
     path(
-        "api/get/comment/<int:id>/",
+        "api/get/comments/<int:id>/",
         views.get_objects_or_object,
         {"model": models.Comment, "serializer": serializers.CommentSerializer},
     ),

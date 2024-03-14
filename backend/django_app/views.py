@@ -15,7 +15,7 @@ def api(request):
 
 @api_view(http_method_names=["GET"])
 @permission_classes([AllowAny])
-def get_objects_or_object(request, model, serializer, id: int = None):
+def get_objects_or_object(request, model, serializer, id=None):
     try:
         return Response(
             data={
@@ -23,7 +23,10 @@ def get_objects_or_object(request, model, serializer, id: int = None):
                     utils.serialization(model, serializer, id=id)
                     if id
                     else utils.serialization(
-                        model, serializer, sort=request.GET.get("sort", None)
+                        model,
+                        serializer,
+                        filter=request.GET.get("filter", None),
+                        sort=request.GET.get("sort", None),
                     )
                 )
             }
@@ -47,7 +50,7 @@ def post_object(request, serializer):
 
 @api_view(http_method_names=["GET"])
 @permission_classes([AllowAny])
-def get_objects_by_field(request, model, serializer, field, id: int = None):
+def get_objects_by_field(request, model, serializer, field, id=None):
     try:
         key = list(field.keys())[0]
         value = field[key].objects.get(id=id)
