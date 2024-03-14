@@ -3,6 +3,7 @@ from django_app import views, models, serializers
 from django.contrib.auth.models import User
 
 urlpatterns = [
+    path("", views.index),
     path("api/", views.api),
     path(
         "api/contracts/",
@@ -35,7 +36,7 @@ urlpatterns = [
     path(
         "api/contract/",
         views.post_object,
-        {"serializer": serializers.PostContractSerializer},
+        # {"serializer": serializers.ContractSerializer},
     ),
     path(
         "api/agents/",
@@ -77,4 +78,5 @@ urlpatterns = [
         views.get_objects_or_object,
         {"model": models.Log, "serializer": serializers.LogSerializer},
     ),
+    path("api/post/", views.post),
 ]

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+FRONT_DIR = BASE_DIR.parent / "frontend"
 
 SECRET_KEY = "django-insecure-n8h3kf9&7-s%8gn)74x(1af!lp7dnd)5d6t$33uqe7-bx1ct7i"
 
@@ -21,6 +22,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django_app.middleware.CustomCorsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -33,16 +35,18 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://localhost:8000",
+# ]
+
 
 ROOT_URLCONF = "django_settings.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [FRONT_DIR / "dist"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -58,13 +62,13 @@ TEMPLATES = [
 WSGI_APPLICATION = "django_settings.wsgi.application"
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'storage',
-        'USER': 'postgres',
-        'PASSWORD': 'admin', 
-        'HOST': 'localhost',
-        'PORT': '5432', 
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "storage",
+        "USER": "postgres",
+        "PASSWORD": "admin",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -91,8 +95,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = "static/"
-STATICFILES_DIRS = [Path(BASE_DIR / "static")]
+STATIC_URL = "assets/" if DEBUG else "/static/"
+# STATIC_ROOT = Path(BASE_DIR / "static")
+STATICFILES_DIRS = [Path(BASE_DIR / "static"), Path(FRONT_DIR / "dist/assets/")]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(BASE_DIR / "static/media")
