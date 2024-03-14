@@ -13,6 +13,7 @@ def api(request):
         return Response(data={"message": request.data})
 
 
+@utils.timeout()
 @api_view(http_method_names=["GET"])
 @permission_classes([AllowAny])
 def get_objects_or_object(request, model, serializer, id=None):
@@ -35,19 +36,7 @@ def get_objects_or_object(request, model, serializer, id=None):
         return Response(data={"message": str(error)})
 
 
-@api_view(http_method_names=["POST"])
-@permission_classes([AllowAny])
-def post_object(request, serializer):
-    try:
-        serializer = serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-    except Exception as error:
-        return Response(data={"message": str(error)})
-
-
+@utils.timeout()
 @api_view(http_method_names=["GET"])
 @permission_classes([AllowAny])
 def get_objects_by_field(request, model, serializer, field, id=None):
@@ -60,5 +49,19 @@ def get_objects_by_field(request, model, serializer, field, id=None):
             **{key: value},
         )
         return Response(data={"data": objects, "total_count": len(objects)})
+    except Exception as error:
+        return Response(data={"message": str(error)})
+
+
+@utils.timeout()
+@api_view(http_method_names=["POST"])
+@permission_classes([AllowAny])
+def post_object(request, serializer):
+    try:
+        serializer = serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
     except Exception as error:
         return Response(data={"message": str(error)})

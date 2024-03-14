@@ -67,4 +67,14 @@ urlpatterns = [
         views.post_object,
         {"serializer": serializers.CommentSerializer},
     ),
+    path(
+        "api/get/logs/",
+        views.get_objects_or_object,
+        {"model": models.Log, "serializer": serializers.LogSerializer},
+    ),
+    path(
+        "api/get/logs/<int:id>",
+        views.get_objects_or_object,
+        {"model": models.Log, "serializer": serializers.LogSerializer},
+    ),
 ]

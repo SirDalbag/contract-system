@@ -16,7 +16,7 @@ class Agent(models.Model):
 
 class Comment(models.Model):
     comment = models.CharField(max_length=255)
-    is_good = models.BooleanField(default=True)
+    is_good = models.BooleanField(default=True, db_index=True)
 
     def __str__(self):
         return f"{self.comment} - {self.is_good}"
@@ -40,3 +40,18 @@ class Contract(models.Model):
     class Meta:
         verbose_name = "Contract"
         verbose_name_plural = "Contracts"
+
+
+class Log(models.Model):
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, null=True, db_index=True
+    )
+    ip = models.CharField(max_length=40, db_index=True)
+    date = models.DateTimeField(db_index=True)
+
+    def __str__(self):
+        return f"{self.ip} - {self.date}"
+
+    class Meta:
+        verbose_name = "Log"
+        verbose_name_plural = "Logs"
