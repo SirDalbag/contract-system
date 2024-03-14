@@ -5,17 +5,17 @@ from django.contrib.auth.models import User
 urlpatterns = [
     path("api/", views.api),
     path(
-        "api/get/contracts/",
+        "api/contracts/",
         views.get_objects_or_object,
         {"model": models.Contract, "serializer": serializers.ContractSerializer},
     ),
     path(
-        "api/get/contracts/<int:id>/",
+        "api/contracts/<int:id>/",
         views.get_objects_or_object,
         {"model": models.Contract, "serializer": serializers.ContractSerializer},
     ),
     path(
-        "api/get/contracts/author/<int:id>",
+        "api/contracts/author/<int:id>",
         views.get_objects_by_field,
         {
             "model": models.Contract,
@@ -24,7 +24,7 @@ urlpatterns = [
         },
     ),
     path(
-        "api/get/contracts/agent/<int:id>",
+        "api/contracts/agent/<int:id>",
         views.get_objects_by_field,
         {
             "model": models.Contract,
@@ -33,47 +33,47 @@ urlpatterns = [
         },
     ),
     path(
-        "api/post/contract/",
+        "api/contract/",
         views.post_object,
         {"serializer": serializers.PostContractSerializer},
     ),
     path(
-        "api/get/agents/",
+        "api/agents/",
         views.get_objects_or_object,
         {"model": models.Agent, "serializer": serializers.AgentSerializer},
     ),
     path(
-        "api/get/agents/<int:id>/",
+        "api/agents/<int:id>/",
         views.get_objects_or_object,
         {"model": models.Agent, "serializer": serializers.AgentSerializer},
     ),
     path(
-        "api/post/agent/",
+        "api/agent/",
         views.post_object,
         {"serializer": serializers.AgentSerializer},
     ),
     path(
-        "api/get/comments/",
+        "api/comments/",
         views.get_objects_or_object,
         {"model": models.Comment, "serializer": serializers.CommentSerializer},
     ),
     path(
-        "api/get/comments/<int:id>/",
+        "api/comments/<int:id>/",
         views.get_objects_or_object,
         {"model": models.Comment, "serializer": serializers.CommentSerializer},
     ),
     path(
-        "api/post/comment/",
+        "api/comment/",
         views.post_object,
         {"serializer": serializers.CommentSerializer},
     ),
     path(
-        "api/get/logs/",
+        "api/logs/",
         views.get_objects_or_object,
         {"model": models.Log, "serializer": serializers.LogSerializer},
     ),
     path(
-        "api/get/logs/<int:id>",
+        "api/logs/<int:id>",
         views.get_objects_or_object,
         {"model": models.Log, "serializer": serializers.LogSerializer},
     ),
