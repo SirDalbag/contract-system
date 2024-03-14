@@ -15,18 +15,18 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ContractSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
     agent = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Contract
-        exclude = ["agent_id"]
+        fields = "__all__"
 
     @staticmethod
-    def get_author(contract):
+    def get_username(contract):
         try:
-            author = contract.author.username
-            return author
+            username = contract.author.username
+            return username
         except Exception as error:
             return str(error)
 
