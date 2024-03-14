@@ -4,10 +4,6 @@ import { Box } from '@mui/material'
 
 const MainPage = () => {
 
-  // function updateData() {
-  //   console.log('updateData');
-  // }
-
   return (
     <>
       <Box

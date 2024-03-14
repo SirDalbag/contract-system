@@ -39,12 +39,6 @@ class ContractSerializer(serializers.ModelSerializer):
             return str(error)
 
 
-class PostContractSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Contract
-        exclude = ["date"]
-
-
 class LogSerializer(serializers.ModelSerializer):
 
     class Meta:

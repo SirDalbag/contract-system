@@ -35,8 +35,7 @@ urlpatterns = [
     ),
     path(
         "api/contract/",
-        views.post_object,
-        # {"serializer": serializers.ContractSerializer},
+        views.post_contract,
     ),
     path(
         "api/agents/",
@@ -78,5 +77,4 @@ urlpatterns = [
         views.get_objects_or_object,
         {"model": models.Log, "serializer": serializers.LogSerializer},
     ),
-    path("api/post/", views.post),
 ]

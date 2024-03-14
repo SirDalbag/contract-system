@@ -1,4 +1,5 @@
-from rest_framework.response import Response
+from rest_framework import status
+from django.http import JsonResponse
 from django.db.models import QuerySet
 from django.utils import timezone
 from django_app import models
@@ -22,24 +23,16 @@ def timeout(user=None, limit=10, seconds=1):
             time = timezone.now() - datetime.timedelta(seconds=seconds)
             log = models.Log.objects.create(user=user, ip=ip, date=timezone.now())
             count = models.Log.objects.filter(ip=ip, date__gt=time).count()
-            print(count)
             if count > limit:
-                raise Exception("Too many attempts!")
+                return JsonResponse(
+                    data={"message": "Too many attempts!"},
+                    status=status.HTTP_429_TOO_MANY_REQUESTS,
+                )
             return func(request, *args, **kwargs)
 
         return wrapper
 
     return decorator
-
-
-# def exception(func):
-#     def wrapper(request, *args, **kwargs):
-#         try:
-#             return func(request, *args, **kwargs)
-#         except Exception as error:
-#             return Response(data={"message": str(error)})
-
-#     return wrapper
 
 
 def serialization(model, serializer, filter=None, sort=None, **kwargs):

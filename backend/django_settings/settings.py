@@ -1,7 +1,7 @@
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FRONT_DIR = BASE_DIR.parent / "frontend"
+FRONTEND_DIR = BASE_DIR.parent / "frontend"
 
 SECRET_KEY = "django-insecure-n8h3kf9&7-s%8gn)74x(1af!lp7dnd)5d6t$33uqe7-bx1ct7i"
 
@@ -10,19 +10,18 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
+    "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "corsheaders",
     "rest_framework",
     "django_app",
 ]
 
 MIDDLEWARE = [
-    "django_app.middleware.CustomCorsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -35,10 +34,7 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://localhost:8000",
-# ]
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8000"]
 
 
 ROOT_URLCONF = "django_settings.urls"
@@ -46,7 +42,7 @@ ROOT_URLCONF = "django_settings.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [FRONT_DIR / "dist"],
+        "DIRS": [FRONTEND_DIR / "dist"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -97,7 +93,7 @@ USE_TZ = True
 
 STATIC_URL = "assets/" if DEBUG else "/static/"
 # STATIC_ROOT = Path(BASE_DIR / "static")
-STATICFILES_DIRS = [Path(BASE_DIR / "static"), Path(FRONT_DIR / "dist/assets/")]
+STATICFILES_DIRS = [Path(BASE_DIR / "static"), Path(FRONTEND_DIR / "dist/assets/")]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(BASE_DIR / "static/media")
