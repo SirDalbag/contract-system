@@ -94,7 +94,7 @@ def post_contract(request):
             file_path=file,
         )
         return JsonResponse(
-            data={"data": serializers.ContractSerializers(contract, many=False).data}
+            data={"data": serializers.ContractSerializer(contract, many=False).data}
         )
     except Exception as error:
         return JsonResponse(data={"message": str(error)})
