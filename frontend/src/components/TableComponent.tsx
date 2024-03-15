@@ -1,4 +1,3 @@
-import axios from 'axios'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -6,44 +5,16 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
-
-import { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
+import { IData } from '../schemas/IData.ts'
+import React from 'react'
 
-interface IData {
-  id: number
-  total: string
-  date: string
-  file_path: string
-  author: number
-  agent_id: number
-  comment_id: number
-  username: string
+interface IProps {
+  data: IData[]
+  totalSum: number
 }
 
-const TableComponent = () => {
-  const [data, setData] = useState<IData[]>([])
-  const [totalSum, setTotalSum] = useState<number>(0)
-
-  const getData = async () => {
-    try {
-      const res = await axios.get('http://127.0.0.1:8000/api/contracts/')
-      setData(res.data.data)
-    } catch (error) {
-      console.error(`Error: ${error}`)
-    }
-  }
-
-  useEffect(() => {
-    getData()
-  }, [])
-
-  useEffect(() => {
-    if (data) {
-      setTotalSum(data.reduce((accumulator, row) => accumulator + parseFloat(row.total), 0))
-    }
-  }, [data])
-
+const TableComponent: React.FC<IProps> = ({ data, totalSum }) => {
   return (
     <>
       <TableContainer component={ Paper }>
@@ -73,7 +44,7 @@ const TableComponent = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Box sx={{alignSelf: 'end'}}>Total: { totalSum }</Box>
+      <Box sx={ { alignSelf: 'end' } }>Total: { totalSum }</Box>
     </>
   )
 }

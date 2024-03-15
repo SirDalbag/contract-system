@@ -1,14 +1,40 @@
 import { Box } from '@mui/material'
 import TableComponent from '../components/TableComponent.tsx'
-import ContractForm from '../components/ContractForm.tsx'
+import { useEffect, useState } from 'react'
+import { IData } from '../schemas/IData.ts'
+import axios from 'axios'
+import { isDebug } from '../../constants.tsx'
 
 const StaffPage = () => {
+  const [data, setData] = useState<IData[]>([])
+  const [totalSum, setTotalSum] = useState<number>(0)
+
+  const getData = async () => {
+    try {
+      const res = await axios.get('http://127.0.0.1:8000/api/contracts/')
+      setData(res.data.data)
+    } catch (error) {
+      if (isDebug) {
+        console.error(`Error: ${ error }`)
+      }
+    }
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  useEffect(() => {
+    if (data) {
+      setTotalSum(data.reduce((accumulator, row) => accumulator + parseFloat(row.total), 0))
+    }
+  }, [data])
+
   return (
     <>
       <Box
         sx={ { display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', gap: '5px' } }>
-        <TableComponent/>
-        <ContractForm/>
+        <TableComponent data={ data } totalSum={ totalSum }/>
       </Box>
     </>
   )

@@ -1,11 +1,35 @@
 from pathlib import Path
+from dotenv import load_dotenv
+import socket
+import os
+
+DEBUG = True if socket.gethostname() == "dalbag" else False
+
+ENV = Path(__file__).resolve().parent / (".env-dev" if DEBUG else ".env-prod")
+
+load_dotenv(ENV)
+
+if DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": f'redis://{os.getenv("REDIS_USERNAME")}:{os.getenv("REDIS_PASSWORD")}@{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}',
+        }
+    }
+
+if not os.getenv("DB_ENGINE"):
+    raise Exception("ENV not found")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR.parent.parent / "frontend"
 
 SECRET_KEY = "django-insecure-n8h3kf9&7-s%8gn)74x(1af!lp7dnd)5d6t$33uqe7-bx1ct7i"
-
-DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -57,16 +81,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "django_settings.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "storage",
-        "USER": "postgres",
-        "PASSWORD": "admin",
-        "HOST": "localhost",
-        "PORT": "5432",
+if not DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.getenv("DB_ENGINE"),
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
