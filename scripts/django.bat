@@ -1,4 +1,4 @@
-cd ../backend
+cd ../backend/django
 
 python -m venv venv
 call venv/scripts/activate

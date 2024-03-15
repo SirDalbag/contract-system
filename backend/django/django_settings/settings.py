@@ -1,7 +1,7 @@
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR.parent / "frontend"
+FRONTEND_DIR = BASE_DIR.parent.parent / "frontend"
 
 SECRET_KEY = "django-insecure-n8h3kf9&7-s%8gn)74x(1af!lp7dnd)5d6t$33uqe7-bx1ct7i"
 

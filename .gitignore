@@ -99,7 +99,7 @@ dmypy.json
 
 cython_debug/
 
-/backend/static/media/files
+files
 
 logs
 *.log
@@ -123,3 +123,15 @@ node_modules/
 *.njsproj
 *.sln
 *.sw?
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+*.test
+
+*.out
+
+go.work
