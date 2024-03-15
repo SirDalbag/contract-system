@@ -99,8 +99,7 @@ dmypy.json
 
 cython_debug/
 
-files
-
+/backend/django/static/media/files
 logs
 *.log
 npm-debug.log*
