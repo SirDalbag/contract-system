@@ -2,14 +2,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.serializers import Serializer
 from rest_framework.response import Response
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse
 from django.core.cache import caches
 from django.shortcuts import render
 from django.db.models import Model
 from django.contrib.auth.models import User
 from django_app import models, serializers, utils
-from django.views.decorators.csrf import csrf_exempt
-
 
 Cache = caches["default"]
 
@@ -105,19 +103,16 @@ def post_object(request: HttpRequest, serializer: Serializer) -> Response:
 
 
 # @utils.timeout()
-# @api_view(http_method_names=["POST"])
-# @permission_classes([AllowAny])
-@csrf_exempt
-def post_contract(request: HttpRequest) -> JsonResponse:
+@api_view(http_method_names=["POST"])
+@permission_classes([AllowAny])
+def post_contract(request: HttpRequest) -> Response:
     if request.method == "POST":
         try:
-            author = (
-                request.user
-                if request.user.is_authenticated
-                else User.objects.get(username="Anonymous")
-            )
-            # agent = models.Agent.objects.get(bin=request.POST.get("bin", None))
-            agent = models.Agent.objects.all().first()
+            if request.user.is_authenticated:
+                author = request.user
+            else:
+                author, _ = User.objects.get_or_create(username="Anonymous")
+            agent = models.Agent.objects.get(bin=request.POST.get("bin", None))
             comment = models.Comment.objects.create(
                 comment=request.POST.get("comment", None)
             )
@@ -130,12 +125,12 @@ def post_contract(request: HttpRequest) -> JsonResponse:
                 total=total,
                 file_path=file,
             )
-            return JsonResponse(
+            return Response(
                 data={
                     "data": serializers.ContractSerializer(contract, many=False).data
                 },
                 status=201,
             )
         except Exception as error:
-            return JsonResponse(data={"message": str(error)}, status=400)
-    return JsonResponse(data={"message": "Method not allowed"}, status=405)
+            return Response(data={"message": str(error)}, status=400)
+    return Response(data={"message": "Method not allowed"}, status=405)
