@@ -1,13 +1,16 @@
 from rest_framework import status
-from django.http import JsonResponse
+from rest_framework.serializers import Serializer
+from django.http import HttpRequest, JsonResponse
 from django.db.models import QuerySet
 from django.utils import timezone
+from django.db.models import Model
+from django.contrib.auth.models import User
 from django_app import models
 import datetime
 import json
 
 
-def get_ip(request):
+def get_ip(request: HttpRequest) -> str:
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     return (
         x_forwarded_for.split(",")[0]
@@ -16,9 +19,9 @@ def get_ip(request):
     )
 
 
-def timeout(user=None, limit=10, seconds=1):
-    def decorator(func):
-        def wrapper(request, *args, **kwargs):
+def timeout(user: User | None = None, limit: int = 10, seconds: int = 1) -> callable:
+    def decorator(func: callable) -> callable:
+        def wrapper(request: HttpRequest, *args: any, **kwargs: any) -> any:
             ip = get_ip(request)
             time = timezone.now() - datetime.timedelta(seconds=seconds)
             log = models.Log.objects.create(user=user, ip=ip, date=timezone.now())
@@ -35,7 +38,13 @@ def timeout(user=None, limit=10, seconds=1):
     return decorator
 
 
-def serialization(model, serializer, filter=None, sort=None, **kwargs):
+def serialization(
+    model: Model,
+    serializer: Serializer,
+    filter: dict[str] = None,
+    sort: str = None,
+    **kwargs: any
+) -> any:
     objects = model.objects.filter(**kwargs) if kwargs else model.objects.all()
     if filter:
         objects = objects.filter(**json.loads(filter))

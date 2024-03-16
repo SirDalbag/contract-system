@@ -16,7 +16,6 @@ export default function ComboBox() {
   const getData = async () => {
     try {
       const res = await axios.get('http://127.0.0.1:8000/api/agents/')
-      console.log('ALOALAOALAOAOOL', res.data.data)
       setData(res.data.data)
     } catch (error) {
       if (isDebug) {

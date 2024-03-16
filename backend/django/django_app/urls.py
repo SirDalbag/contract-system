@@ -8,12 +8,20 @@ urlpatterns = [
     path(
         "api/contracts/",
         views.get_objects_or_object,
-        {"model": models.Contract, "serializer": serializers.ContractSerializer},
+        {
+            "model": models.Contract,
+            "serializer": serializers.ContractSerializer,
+            "key": "contracts",
+        },
     ),
     path(
         "api/contracts/<int:id>/",
         views.get_objects_or_object,
-        {"model": models.Contract, "serializer": serializers.ContractSerializer},
+        {
+            "model": models.Contract,
+            "serializer": serializers.ContractSerializer,
+            "key": "contract",
+        },
     ),
     path(
         "api/contracts/author/<int:id>",
@@ -22,6 +30,7 @@ urlpatterns = [
             "model": models.Contract,
             "serializer": serializers.ContractSerializer,
             "field": {"author": User},
+            "key": "contract-author",
         },
     ),
     path(
@@ -31,6 +40,7 @@ urlpatterns = [
             "model": models.Contract,
             "serializer": serializers.ContractSerializer,
             "field": {"agent_id": models.Agent},
+            "key": "contract-agent",
         },
     ),
     path(
@@ -40,12 +50,20 @@ urlpatterns = [
     path(
         "api/agents/",
         views.get_objects_or_object,
-        {"model": models.Agent, "serializer": serializers.AgentSerializer},
+        {
+            "model": models.Agent,
+            "serializer": serializers.AgentSerializer,
+            "key": "agents",
+        },
     ),
     path(
         "api/agents/<int:id>/",
         views.get_objects_or_object,
-        {"model": models.Agent, "serializer": serializers.AgentSerializer},
+        {
+            "model": models.Agent,
+            "serializer": serializers.AgentSerializer,
+            "key": "agent",
+        },
     ),
     path(
         "api/agent/",
@@ -55,12 +73,20 @@ urlpatterns = [
     path(
         "api/comments/",
         views.get_objects_or_object,
-        {"model": models.Comment, "serializer": serializers.CommentSerializer},
+        {
+            "model": models.Comment,
+            "serializer": serializers.CommentSerializer,
+            "key": "comments",
+        },
     ),
     path(
         "api/comments/<int:id>/",
         views.get_objects_or_object,
-        {"model": models.Comment, "serializer": serializers.CommentSerializer},
+        {
+            "model": models.Comment,
+            "serializer": serializers.CommentSerializer,
+            "key": "comment",
+        },
     ),
     path(
         "api/comment/",
@@ -70,11 +96,11 @@ urlpatterns = [
     path(
         "api/logs/",
         views.get_objects_or_object,
-        {"model": models.Log, "serializer": serializers.LogSerializer},
+        {"model": models.Log, "serializer": serializers.LogSerializer, "key": "logs"},
     ),
     path(
         "api/logs/<int:id>",
         views.get_objects_or_object,
-        {"model": models.Log, "serializer": serializers.LogSerializer},
+        {"model": models.Log, "serializer": serializers.LogSerializer, "key": "log"},
     ),
 ]

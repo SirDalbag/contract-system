@@ -9,6 +9,9 @@ ENV = Path(__file__).resolve().parent / (".env-dev" if DEBUG else ".env-prod")
 
 load_dotenv(ENV)
 
+if not os.getenv("DB_ENGINE"):
+    raise Exception("ENV not found")
+
 if DEBUG:
     CACHES = {
         "default": {
@@ -22,9 +25,6 @@ else:
             "LOCATION": f'redis://{os.getenv("REDIS_USERNAME")}:{os.getenv("REDIS_PASSWORD")}@{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}',
         }
     }
-
-if not os.getenv("DB_ENGINE"):
-    raise Exception("ENV not found")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR.parent.parent / "frontend"
