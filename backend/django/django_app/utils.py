@@ -24,13 +24,17 @@ def timeout(user: User | None = None, limit: int = 10, seconds: int = 1) -> call
         def wrapper(request: HttpRequest, *args: any, **kwargs: any) -> any:
             ip = get_ip(request)
             time = timezone.now() - datetime.timedelta(seconds=seconds)
-            log = models.Log.objects.create(user=user, ip=ip, date=timezone.now())
-            count = models.Log.objects.filter(ip=ip, date__gt=time).count()
+            count = (
+                models.Log.objects.filter(user=user, date__gt=time).count()
+                if user
+                else models.Log.objects.filter(ip=ip, date__gt=time).count()
+            )
             if count > limit:
                 return JsonResponse(
                     data={"message": "Too many attempts!"},
                     status=status.HTTP_429_TOO_MANY_REQUESTS,
                 )
+            log = models.Log.objects.create(user=user, ip=ip, date=timezone.now())
             return func(request, *args, **kwargs)
 
         return wrapper
