@@ -1,6 +1,8 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import Serializer
+from rest_framework.utils.serializer_helpers import ReturnList
 from rest_framework.response import Response
 from django.http import HttpRequest, HttpResponse
 from django.core.cache import caches
@@ -20,6 +22,13 @@ def get_cache(
         data = query()
         cache.set(key, data, timeout)
     return data
+
+
+def get_pagination(request: HttpRequest, objects: ReturnList) -> any:
+    paginator = PageNumberPagination()
+    page_size = request.GET.get("page_size", 10)
+    paginator.page_size = page_size
+    return paginator.paginate_queryset(objects, request)
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -47,7 +56,7 @@ def get_objects_or_object(
 ) -> Response:
     try:
 
-        def get_data():
+        def get_data() -> ReturnList:
             return (
                 utils.serialization(model=model, serializer=serializer, id=id)
                 if id
@@ -60,7 +69,9 @@ def get_objects_or_object(
             )
 
         cache = get_cache(key=key, query=get_data, timeout=1, cache=Cache)
-        return Response(data={"data": cache}, status=200)
+        return Response(
+            data={"data": get_pagination(request=request, objects=cache)}, status=200
+        )
     except Exception as error:
         return Response(data={"message": str(error)}, status=500)
 
@@ -77,13 +88,30 @@ def get_objects_by_field(
 ) -> Response:
     try:
         key = list(field.keys())[0]
-        value = field[key].objects.get(id=id)
-        objects = utils.serialization(
-            model=model,
-            serializer=serializer,
-            **{key: value},
+
+        def get_data() -> ReturnList:
+            key = list(field.keys())[0]
+            value = field[key].objects.get(id=id)
+            return utils.serialization(
+                model=model,
+                serializer=serializer,
+                **{key: value},
+            )
+
+        objects = get_data()
+        cache = get_cache(
+            key=f"contracts-{key}",
+            query=get_data,
+            timeout=1,
+            cache=Cache,
         )
-        return Response(data={"data": objects, "total_count": len(objects)}, status=200)
+        return Response(
+            data={
+                "data": get_pagination(request=request, objects=cache),
+                "total_count": len(objects),
+            },
+            status=200,
+        )
     except Exception as error:
         return Response(data={"message": str(error)}, status=400)
 

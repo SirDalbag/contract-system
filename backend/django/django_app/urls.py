@@ -30,7 +30,6 @@ urlpatterns = [
             "model": models.Contract,
             "serializer": serializers.ContractSerializer,
             "field": {"author": User},
-            "key": "contract-author",
         },
     ),
     path(
@@ -40,7 +39,6 @@ urlpatterns = [
             "model": models.Contract,
             "serializer": serializers.ContractSerializer,
             "field": {"agent_id": models.Agent},
-            "key": "contract-agent",
         },
     ),
     path(
