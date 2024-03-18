@@ -1,6 +1,11 @@
 from django.urls import path
 from django_app import views, models, serializers
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 urlpatterns = [
     path("", views.index),
@@ -101,4 +106,8 @@ urlpatterns = [
         views.get_objects_or_object,
         {"model": models.Log, "serializer": serializers.LogSerializer, "key": "log"},
     ),
+    path("api/user/register/", views.register),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
 ]

@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django_app import models
 import datetime
 import json
+import re
 
 
 def get_ip(request: HttpRequest) -> str:
@@ -58,3 +59,9 @@ def serialization(
         objects,
         many=isinstance(objects, QuerySet),
     ).data
+
+
+# {"username":"tester", "password":"Qwerty1!"}
+def check_password(password: str) -> bool:
+    pattern = re.compile(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$")
+    return bool(pattern.match(password))

@@ -9,6 +9,8 @@ from django.core.cache import caches
 from django.shortcuts import render
 from django.db.models import Model
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate
 from django_app import models, serializers, utils
 
 Cache = caches["default"]
@@ -162,3 +164,18 @@ def post_contract(request: HttpRequest) -> Response:
         except Exception as error:
             return Response(data={"message": str(error)}, status=400)
     return Response(data={"message": "Method not allowed"}, status=405)
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes([AllowAny])
+def register(request) -> Response:
+    username = request.data.get("username", None)
+    password = request.data.get("password", None)
+    if username and password and utils.check_password(password=password):
+        User.objects.create(username=username, password=make_password(password))
+        return Response(data={"message": "Account created"}, status=200)
+    else:
+        return Response(
+            data={"error": "Invalid login or password"},
+            status=401,
+        )
