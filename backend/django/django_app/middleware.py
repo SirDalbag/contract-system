@@ -17,11 +17,10 @@ class CustomLogsMiddleware:
             }
 
             def make_request():
-                temp = requests.post(
+                requests.post(
                     url="http://127.0.0.1:8001/api/log",
                     data=data,
                 )
-                print(temp.status_code)
 
             thread = threading.Thread(target=make_request)
             thread.start()

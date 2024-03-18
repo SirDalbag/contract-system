@@ -55,8 +55,6 @@ func writeTxtComplex(ip string, date int) error {
 }
 
 func main() {
-	// var ip string = "192.168.0.1"
-	// var date int     = 1710773281
 	router := gin.Default()
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"data": "OK"})
@@ -65,23 +63,19 @@ func main() {
 		var answer Answer
 		raw, err := c.GetRawData()
 		if err != nil {
-			fmt.Println(err)
 			return
 		}
-		raw_str := string(raw)
-		raw_list := strings.Split(raw_str, "&")
-		// ip=127.0.0.1&date=1710779172
-		for _, raw_item := range raw_list {
-			raw_item_list := strings.Split(raw_item, "=")
-			if len(raw_item_list) != 2 {
+		_raw := strings.Split(string(raw), "&")
+		for _, item := range _raw {
+			item_list := strings.Split(item, "=")
+			if len(item_list) != 2 {
 				continue
 			}
-			if raw_item_list[0] == "ip" {
-				answer.Ip = raw_item_list[1]
-			} else if raw_item_list[0] == "date" {
-				date, err := strconv.Atoi(raw_item_list[1])
+			if item_list[0] == "ip" {
+				answer.Ip = item_list[1]
+			} else if item_list[0] == "date" {
+				date, err := strconv.Atoi(item_list[1])
 				if err != nil {
-					fmt.Println(err)
 					return
 				}
 				answer.Date = date
@@ -91,15 +85,9 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
 			return
 		}
-		// if err := c.BindJSON(&answer); err != nil {
-		// 	fmt.Println(err)
-		// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Ошибка 1"})
-		// 	return
-		// }
 		err = writeTxtComplex(answer.Ip, answer.Date)
 		if err != nil {
-			fmt.Println(err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Ошибка 2"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Error"})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"data": "OK"})
