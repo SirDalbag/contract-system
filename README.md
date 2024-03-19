@@ -1,6 +1,6 @@
 # Contract system
 
-Fullstack project
+Full Stack project
 
 ## Key Features:
 
