@@ -1,4 +1,4 @@
-// https://github.com/bogdandrienko/awesome-golang/tree/main/1_base
+// github.com/bogdandrienko/awesome-golang/
 
 package main
 
@@ -18,8 +18,8 @@ type Answer struct {
 	Date int    `json:"date"`
 }
 
-func formattedDate(str_format string, _datetime int64) (string, error) {
-	t := time.Unix(_datetime, 0)
+func formattedDate(str_format string, _datetime int) (string, error) {
+	t := time.Unix(int64(_datetime), 0)
 	switch str_format {
 	case "%04d_%02d_%02d_%02d":
 		return fmt.Sprintf(str_format, t.Year(), t.Month(), t.Day(), t.Hour()), nil
@@ -31,11 +31,18 @@ func formattedDate(str_format string, _datetime int64) (string, error) {
 }
 
 func writeTxtComplex(ip string, date int) error {
-	formatted_str, err := formattedDate("%04d_%02d_%02d_%02d", 1710773281)
+	formatted_str, err := formattedDate("%04d_%02d_%02d_%02d", date)
 	if err != nil {
 		return err
 	}
-	filename := fmt.Sprintf("%s.txt", formatted_str)
+	_, err = os.Stat("logs")
+	if os.IsNotExist(err) {
+		err := os.Mkdir("logs", os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+	filename := fmt.Sprintf("logs/%s.txt", formatted_str)
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		return err

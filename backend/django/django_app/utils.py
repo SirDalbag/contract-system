@@ -1,14 +1,32 @@
 from rest_framework import status
 from rest_framework.serializers import Serializer
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.utils.serializer_helpers import ReturnList
 from django.http import HttpRequest, JsonResponse
-from django.db.models import QuerySet
 from django.utils import timezone
-from django.db.models import Model
+from django.db.models import Model, QuerySet
 from django.contrib.auth.models import User
 from django_app import models
 import datetime
 import json
 import re
+
+
+def get_cache(
+    key: str, cache: any, query: callable = lambda: any, timeout: int = 10
+) -> any:
+    data = cache.get(key)
+    if data is None:
+        data = query()
+        cache.set(key, data, timeout)
+    return data
+
+
+def get_pagination(request: HttpRequest, objects: ReturnList) -> any:
+    paginator = PageNumberPagination()
+    page_size = request.GET.get("page_size", 10)
+    paginator.page_size = page_size
+    return paginator.paginate_queryset(objects, request)
 
 
 def get_ip(request: HttpRequest) -> str:
@@ -61,7 +79,6 @@ def serialization(
     ).data
 
 
-# {"username":"tester", "password":"Qwerty1!"}
 def check_password(password: str) -> bool:
     pattern = re.compile(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$")
     return bool(pattern.match(password))

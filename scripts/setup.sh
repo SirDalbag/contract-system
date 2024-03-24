@@ -1,12 +1,9 @@
-#!/bin/bash
-
 execute_command() {
     eval "$1"
     if [ $? -eq 0 ]; then
-        echo -e "\e[94mКоманда: $1 успешно выполнена\e[0m"
+        echo -e "\e[94m$1 success!\e[0m"
     else
-        echo -e "\e[91mОшибка при выполнении команды: $1\e[0m"
-    fi
+        echo -e "\e[91mError: $1\e[0m"
 }
 
 execute_command "sudo apt-get update -y"
@@ -26,7 +23,7 @@ execute_command "sudo apt install postgresql postgresql-contrib"
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 source ~/.bashrc
 
-read -p "Введите имя пользователя (пользователь должен иметь доступ): " username
+read -p "Enter the user name (user must have access): " username
 
 execute_command "cd /var/www/ && sudo mkdir -p contracts"
 
@@ -43,4 +40,4 @@ execute_command "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE sto
 execute_command "sudo -u postgres psql -d storage -c \"GRANT ALL PRIVILEGES ON SCHEMA public TO admin;\""
 
 
-echo -e "\e[92mПожалуйста, перезагрузите терминал и запустите nvm_install.sh\e[0m"
+echo -e "\e[92mReboot the terminal and run nvm.sh\e[0m"

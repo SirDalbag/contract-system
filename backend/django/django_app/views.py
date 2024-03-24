@@ -1,6 +1,5 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.serializers import Serializer
 from rest_framework.utils.serializer_helpers import ReturnList
 from rest_framework.response import Response
@@ -15,23 +14,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 Cache = caches["default"]
-
-
-def get_cache(
-    key: str, query: callable = lambda: any, timeout: int = 10, cache: any = Cache
-) -> any:
-    data = cache.get(key)
-    if data is None:
-        data = query()
-        cache.set(key, data, timeout)
-    return data
-
-
-def get_pagination(request: HttpRequest, objects: ReturnList) -> any:
-    paginator = PageNumberPagination()
-    page_size = request.GET.get("page_size", 10)
-    paginator.page_size = page_size
-    return paginator.paginate_queryset(objects, request)
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -71,9 +53,9 @@ def get_objects_or_object(
                     )
                 )
 
-            cache = get_cache(key=key, query=get_data, timeout=1, cache=Cache)
+            cache = utils.get_cache(key=key, cache=Cache, query=get_data, timeout=1)
             return Response(
-                data={"data": get_pagination(request=request, objects=cache)},
+                data={"data": utils.get_pagination(request=request, objects=cache)},
                 status=200,
             )
         except Exception as error:
@@ -104,15 +86,15 @@ def get_objects_by_field(
                 )
 
             objects = get_data()
-            cache = get_cache(
+            cache = utils.get_cache(
                 key=f"contracts-{key}",
+                cache=Cache,
                 query=get_data,
                 timeout=1,
-                cache=Cache,
             )
             return Response(
                 data={
-                    "data": get_pagination(request=request, objects=cache),
+                    "data": utils.get_pagination(request=request, objects=cache),
                     "total_count": len(objects),
                 },
                 status=200,
@@ -189,45 +171,3 @@ def register(request) -> Response:
         except Exception as error:
             return Response(data={"message": str(error)}, status=400)
     return Response(data={"message": "Method not allowed"}, status=405)
-
-
-@api_view(http_method_names=["POST", "GET"])
-@permission_classes([AllowAny])
-def full_access(request) -> Response:
-    headers = request.headers
-    print(headers)
-    auth_header = headers.get("Authorization")
-
-    return Response(data={"message": "OK"}, status=200)
-
-
-@api_view(http_method_names=["POST", "GET"])
-@permission_classes([IsAuthenticated])
-def private_access(request) -> Response:
-    return Response(data={"message": "OK"}, status=200)
-
-
-@swagger_auto_schema(
-    method="GET",
-    responses={
-        200: openapi.Schema(
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    field.name: openapi.Schema(
-                        type=openapi.TYPE_STRING, description=str(field.help_text)
-                    )
-                    for field in User._meta.fields
-                },
-            ),
-        )
-    },
-)
-@api_view(http_method_names=["GET"])
-@permission_classes([AllowAny])
-def user_list(request) -> Response:
-    if request.method == "GET":
-        users = User.objects.all()
-        serializer = serializers.UserSerializer(users, many=True)
-        return Response(data={"data": serializer.data}, status=200)

@@ -113,12 +113,9 @@ urlpatterns = [
     path("api/token/", TokenObtainPairView.as_view()),
     path("api/token/refresh/", TokenRefreshView.as_view()),
     path("api/token/verify/", TokenVerifyView.as_view()),
-    path("api/fullAccess/", views.full_access),
-    path("api/privateAccess/", views.private_access),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
-    path("api/user-list", views.user_list),
 ]
