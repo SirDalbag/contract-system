@@ -1,13 +1,12 @@
 from django.urls import path
 from django_app import views, models, serializers
 from django.contrib.auth.models import User
+from django_app.swagger import schema_view
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
-
-from django_app.swagger import schema_view
 
 
 urlpatterns = [
@@ -114,7 +113,7 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view()),
     path("api/token/verify/", TokenVerifyView.as_view()),
     path(
-        "swagger/",
+        "api/swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),

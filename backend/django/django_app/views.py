@@ -10,8 +10,6 @@ from django.db.models import Model
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django_app import models, serializers, utils
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 Cache = caches["default"]
 
@@ -122,7 +120,6 @@ def post_object(request: HttpRequest, serializer: Serializer) -> Response:
 @api_view(http_method_names=["POST"])
 @permission_classes([AllowAny])
 def post_contract(request: HttpRequest) -> Response:
-    print("privet", request.POST)
     if request.method == "POST":
         try:
             if request.user.is_authenticated:
