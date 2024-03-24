@@ -63,5 +63,5 @@ def serialization(
 
 # {"username":"tester", "password":"Qwerty1!"}
 def check_password(password: str) -> bool:
-    pattern = re.compile(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$")
+    pattern = re.compile(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$")
     return bool(pattern.match(password))

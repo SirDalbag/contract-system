@@ -2,21 +2,21 @@ import TableComponent from '../components/TableComponent.tsx'
 import ContractForm from '../components/ContractForm.tsx'
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { IData, IForm } from '../schemas/IData.ts'
 import { isDebug } from '../../constants.tsx'
+import axiosInstance from '../api.ts'
 
 
 const MainPage = () => {
   const [data, setData] = useState<IData[]>([])
   const [totalSum, setTotalSum] = useState<number>(0)
   const [form, setForm] = useState<IForm>({
-    bin: '',
     comment: '',
     total: 0,
     file_path: null
   })
   const [fileSize, setFileSize] = useState<number>(0)
+  const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -25,7 +25,7 @@ const MainPage = () => {
 
   const getData = async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:8000/api/contracts/')
+      const res = await axiosInstance.get('/contracts/')
       setData(res.data.data)
     } catch (error) {
       if (isDebug) {
@@ -50,8 +50,14 @@ const MainPage = () => {
   const postData = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
+    if (!selectedAgentId) {
+      window.alert("Please select an agent.");
+      return;
+    }
+
     const formData = new FormData()
-    formData.append('bin', 'BIN')
+    // @ts-ignore
+    formData.append('id', selectedAgentId)
     formData.append('comment', form.comment)
     formData.append('total', form.total.toString())
     if (form.file_path) {
@@ -62,8 +68,8 @@ const MainPage = () => {
     }
 
     try {
-      const res = await axios.post(
-        'http://127.0.0.1:8000/api/contract/',
+      const res = await axiosInstance.post(
+        '/contract/',
         formData,
         {
           headers: {
@@ -71,6 +77,8 @@ const MainPage = () => {
           }
         }
       )
+      console.log(formData);
+      
       getData()
       if (isDebug) {
         console.log(res)
@@ -97,7 +105,9 @@ const MainPage = () => {
       <Box
         sx={ { display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', gap: '5px' } }>
         <TableComponent data={ data } totalSum={ totalSum }/>
-        <ContractForm postData={ postData } handleFileChange={ handleFileChange } form={ form }
+        
+        <ContractForm // @ts-ignore 
+        setSelectedAgentId={ setSelectedAgentId } postData={ postData } handleFileChange={ handleFileChange } form={ form }
                       handleInputChange={ handleInputChange } fileSize={ fileSize }/>
       </Box>
     </>

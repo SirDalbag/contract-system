@@ -11,6 +11,8 @@ from django.db.models import Model
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django_app import models, serializers, utils
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 Cache = caches["default"]
 
@@ -138,13 +140,14 @@ def post_object(request: HttpRequest, serializer: Serializer) -> Response:
 @api_view(http_method_names=["POST"])
 @permission_classes([AllowAny])
 def post_contract(request: HttpRequest) -> Response:
+    print("privet", request.POST)
     if request.method == "POST":
         try:
             if request.user.is_authenticated:
                 author = request.user
             else:
                 author, _ = User.objects.get_or_create(username="Anonymous")
-            agent = models.Agent.objects.get(bin=request.POST.get("bin", None))
+            agent = models.Agent.objects.get(id=request.POST.get("id", None))
             comment = models.Comment.objects.create(
                 comment=request.POST.get("comment", None)
             )
@@ -186,3 +189,45 @@ def register(request) -> Response:
         except Exception as error:
             return Response(data={"message": str(error)}, status=400)
     return Response(data={"message": "Method not allowed"}, status=405)
+
+
+@api_view(http_method_names=["POST", "GET"])
+@permission_classes([AllowAny])
+def full_access(request) -> Response:
+    headers = request.headers
+    print(headers)
+    auth_header = headers.get("Authorization")
+
+    return Response(data={"message": "OK"}, status=200)
+
+
+@api_view(http_method_names=["POST", "GET"])
+@permission_classes([IsAuthenticated])
+def private_access(request) -> Response:
+    return Response(data={"message": "OK"}, status=200)
+
+
+@swagger_auto_schema(
+    method="GET",
+    responses={
+        200: openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    field.name: openapi.Schema(
+                        type=openapi.TYPE_STRING, description=str(field.help_text)
+                    )
+                    for field in User._meta.fields
+                },
+            ),
+        )
+    },
+)
+@api_view(http_method_names=["GET"])
+@permission_classes([AllowAny])
+def user_list(request) -> Response:
+    if request.method == "GET":
+        users = User.objects.all()
+        serializer = serializers.UserSerializer(users, many=True)
+        return Response(data={"data": serializer.data}, status=200)

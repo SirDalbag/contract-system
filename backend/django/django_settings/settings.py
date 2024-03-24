@@ -4,7 +4,8 @@ import socket
 import os
 from datetime import timedelta
 
-DEBUG = True if socket.gethostname() == "dalbag" else False
+host_names = ["RogStrix", "dalbag", "romAYAYA"]
+DEBUG = True if socket.gethostname() in host_names else False
 
 ENV = Path(__file__).resolve().parent / (".env-dev" if DEBUG else ".env-prod")
 
@@ -44,7 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "django_app",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -137,10 +140,16 @@ MEDIA_ROOT = Path(BASE_DIR / "static/media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
+    "DEFAULT_PERMISSION_CLASSES": (
+        # 'rest_framework.permissions.IsAdmin',
+        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
+    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ]
+    ),
 }
 
 SIMPLE_JWT = {

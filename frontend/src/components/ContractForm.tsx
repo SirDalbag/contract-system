@@ -12,52 +12,53 @@ interface IProps {
   fileSize: number
 }
 
-const ContractForm: React.FC<IProps> = ({ postData, handleFileChange, form, handleInputChange, fileSize }) => {
+// @ts-ignore
+const ContractForm: React.FC<IProps> = ({postData,  handleFileChange, form, handleInputChange, fileSize, setSelectedAgentId }) => {
 
   return (
     <>
-      <form onSubmit={ postData }>
+      <form onSubmit={postData}>
         <Box
-          sx={ {
+          sx={{
             display: 'flex',
             flexDirection: 'column',
             gap: '5px',
             width: '200px'
-          } }
+          }}
         >
-          <ComboBox/>
+          <ComboBox onAgentSelect={setSelectedAgentId} />
           <Button variant="contained" component="label">
             Upload File
             <input
-              onChange={ handleFileChange }
+              onChange={handleFileChange}
               type="file"
               name="file_path"
               hidden
             />
-          </Button>{ ' ' }
-          { form.file_path ? form.file_path.name : '' }
+          </Button>{' '}
+          {form.file_path ? form.file_path.name : ''}
           <TextField
-            value={ form.comment }
-            onChange={ handleInputChange }
+            value={form.comment}
+            onChange={handleInputChange}
             name="comment"
             label="Comment"
             variant="standard"
           />
           <TextField
-            value={ form.total }
-            onChange={ handleInputChange }
+            value={form.total}
+            onChange={handleInputChange}
             name="total"
             label="Total"
             type="number"
             variant="standard"
           />
-          { fileSize < 10 * 1024 ? (
+          {fileSize < 10 * 1024 ? (
             <Button type="submit">Submit</Button>
           ) : (
             <Button disabled type="submit">
               Submit
             </Button>
-          ) }
+          )}
         </Box>
       </form>
     </>

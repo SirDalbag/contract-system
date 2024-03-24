@@ -10,7 +10,6 @@ export interface IData {
 }
 
 export interface IForm {
-  bin: string;
   comment: string;
   total: number;
   file_path: File | null;

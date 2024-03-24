@@ -2,8 +2,8 @@ import { Box } from '@mui/material'
 import TableComponent from '../components/TableComponent.tsx'
 import { useEffect, useState } from 'react'
 import { IData } from '../schemas/IData.ts'
-import axios from 'axios'
 import { isDebug } from '../../constants.tsx'
+import axiosInstance from '../api.ts'
 
 const StaffPage = () => {
   const [data, setData] = useState<IData[]>([])
@@ -11,7 +11,7 @@ const StaffPage = () => {
 
   const getData = async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:8000/api/contracts/')
+      const res = await axiosInstance.get('/contracts/')
       setData(res.data.data)
     } catch (error) {
       if (isDebug) {

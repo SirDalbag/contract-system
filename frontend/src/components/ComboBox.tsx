@@ -1,8 +1,8 @@
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { isDebug } from '../../constants.tsx'
+import axiosInstance from '../api.ts'
 
 interface IAgent {
   bin: string
@@ -10,17 +10,29 @@ interface IAgent {
   title: string
 }
 
-export default function ComboBox() {
+interface IComboBoxProps {
+  onAgentSelect: (agentId: number | null) => void
+  width?: string
+}
+
+const ComboBox: React.FC<IComboBoxProps> = ({
+  onAgentSelect,
+  width = '200px'
+}) => {
   const [data, setData] = useState<IAgent[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const getData = async () => {
+    setIsLoading(true)
     try {
-      const res = await axios.get('http://127.0.0.1:8000/api/agents/')
+      const res = await axiosInstance.get(`/agents/`)
       setData(res.data.data)
     } catch (error) {
       if (isDebug) {
         console.error(error)
       }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -28,24 +40,33 @@ export default function ComboBox() {
     getData()
   }, [])
 
-  const newData: string[] = data.map(d => d.title)
+  const handleAgentSelect = (agent: IAgent | null) => {
+    if (agent) {
+      onAgentSelect(agent.id)
+    } else {
+      onAgentSelect(null)
+    }
+  }
 
   return (
     <>
-      { data && (
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={ newData }
-          sx={ { width: 300 } }
-          renderInput={ (params) => <TextField { ...params } label="Agents"/> }
+          options={data}
+          getOptionLabel={(option: IAgent) => option.title}
+          // @ts-ignore
+          onChange={(event, value) => handleAgentSelect(value)}
+          renderInput={params => (
+            <TextField {...params} label="Agents" sx={{ width }} />
+          )}
         />
-      ) }
-      { !data && (
-        <div>
-          loading
-        </div>
-      ) }
+      )}
     </>
   )
 }
+
+export default ComboBox
